@@ -4,11 +4,13 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <string>
 #include <iomanip> 
 #include <vector>
 #include "GBMap.h"
 #include "../Deck/HarvestTile.h"
 #include "../Enums/ResourceTypes.h"
+#include "../Enums/TileEdges.h"
 
 GameBoard::GameBoard(int players) {
 	this->players = new int(players);
@@ -233,4 +235,327 @@ void GameBoard::setRows_Columns() {
 			this->mapColumns = new int(7);
 			break;
 	}
+}
+
+void GameBoard::calculateResources(HarvestTile* tilePlayed, int rowNumber, int columnNumber) {
+
+	resourcesCollected.assign(4, 0); //initialize all resources to 0
+
+	//Calculate the placed tile's own resources
+	for (int i = 0; i < 4; i++) {
+		incrementResource(tilePlayed->getResourceType(static_cast<Corners>(i)));
+	}
+
+	Node* topNode = gameBoardGraph->getNodeAtCoordinatesXY(rowNumber, columnNumber)->getNodeOnTopEdge();
+	Node* leftNode = gameBoardGraph->getNodeAtCoordinatesXY(rowNumber, columnNumber)->getNodeOnLeftEdge();
+	Node* rightNode = gameBoardGraph->getNodeAtCoordinatesXY(rowNumber, columnNumber)->getNodeOnRightEdge();
+	Node* bottomNode = gameBoardGraph->getNodeAtCoordinatesXY(rowNumber, columnNumber)->getNodeOnBottomEdge();
+
+	//First check that the node exists (checking for out of bounds Node pointer)
+	if (topNode != nullptr) {
+		HarvestTile* topHarvestTile = dynamic_cast<HarvestTile*>(topNode->getGameTile());
+
+		//Check that the Tile is not empty and has resources
+		if (topHarvestTile->getResources() != nullptr) {
+			//std::cout << "top node exists and it has resources\n";
+			calculateAdjacentRes(tilePlayed, topHarvestTile, Edges::TOP);
+		}
+
+	}
+	
+	if (leftNode != nullptr) {
+		HarvestTile* leftHarvestTile = dynamic_cast<HarvestTile*>(leftNode->getGameTile());
+
+		if (leftHarvestTile->getResources() != nullptr) {
+			//std::cout << "left node exists and it has resources\n";
+			calculateAdjacentRes(tilePlayed, leftHarvestTile, Edges::LEFT);
+		}
+
+	}
+
+	if (rightNode != nullptr) {
+		HarvestTile* rightHarvestTile = dynamic_cast<HarvestTile*>(rightNode->getGameTile());
+
+		if (rightHarvestTile->getResources() != nullptr) {
+			//std::cout << "right node exists and it has resources\n";
+			calculateAdjacentRes(tilePlayed, rightHarvestTile, Edges::RIGHT);
+		}
+
+	}
+
+	if (bottomNode != nullptr) {
+		HarvestTile* bottomHarvestTile = dynamic_cast<HarvestTile*>(bottomNode->getGameTile());
+
+		if (bottomHarvestTile->getResources() != nullptr) {
+			//std::cout << "bottom node exists and it has resources\n";
+			calculateAdjacentRes(tilePlayed, bottomHarvestTile, Edges::BOTTOM);
+		}
+
+	}
+
+}
+
+void GameBoard::calculateAdjacentRes(HarvestTile* tilePlayed, HarvestTile* edgeTile, enum Edges edge) {
+	if (edge == Edges::TOP) {
+		//std::cout << "top Node Edge, let's start a chain collection from the played tile topLeft resource\n";
+
+		ResourceTypes topLeftResource = tilePlayed->getResourceType(Corners::TOP_LEFT);
+
+		if (topLeftResource == edgeTile->getResourceType(Corners::BOTTOM_LEFT)) {
+			//std::cout << "resource chain collection from the played tile TOP_LEFT resource\n";
+			
+			incrementResource(topLeftResource);
+			
+			if (edgeTile->getResourceType(Corners::BOTTOM_RIGHT) == topLeftResource) {
+
+				incrementResource(topLeftResource);
+
+				//Collect diagonal resources only if any adjacent tile is of the same resource
+				if (edgeTile->getResourceType(Corners::TOP_RIGHT) == topLeftResource)
+					incrementResource(topLeftResource);
+			}
+				
+			if (edgeTile->getResourceType(Corners::TOP_LEFT) == topLeftResource) {
+				
+				incrementResource(topLeftResource);
+
+				//Collect diagonal resources only if any adjacent tile is of the same resource
+				if (edgeTile->getResourceType(Corners::TOP_RIGHT) == topLeftResource)
+					incrementResource(topLeftResource);
+			}
+		}
+
+		ResourceTypes topRightResource = tilePlayed->getResourceType(Corners::TOP_RIGHT);
+
+		//To avoid duplicate collection, lets follow the Tile Corners order. The next one is the TOP_RIGHT resource
+		//We need to check if the TOP_LEFT resource has already collected the same type of adjacent resources
+		if (topLeftResource == topRightResource && topLeftResource == edgeTile->getResourceType(Corners::BOTTOM_LEFT)) {
+			//std::cout << "These resources has been previously collected.\n";
+		}
+		else if (topRightResource == edgeTile->getResourceType(Corners::BOTTOM_RIGHT)) {
+			//std::cout << "resource chain collection from the played tile TOP_RIGHT resource\n";
+			
+			incrementResource(topRightResource);
+			
+			if (edgeTile->getResourceType(Corners::BOTTOM_LEFT) == topRightResource) {
+				
+				incrementResource(topRightResource);
+
+				//Collect diagonal resources only if any adjacent tile is of the same resource
+				if (edgeTile->getResourceType(Corners::TOP_LEFT) == topRightResource)
+					incrementResource(topRightResource);
+			}
+
+			if (edgeTile->getResourceType(Corners::TOP_RIGHT) == topRightResource) {
+
+				incrementResource(topRightResource);
+
+				//Collect diagonal resources only if any adjacent tile is of the same resource
+				if (edgeTile->getResourceType(Corners::TOP_LEFT) == topRightResource)
+					incrementResource(topRightResource);
+			}
+				
+
+		}
+	}
+
+	if (edge == Edges::LEFT) {
+		//std::cout << "left Node Edge, let's start a chain collection from the played tile topLeft resource\n";
+
+		ResourceTypes topLeftResource = tilePlayed->getResourceType(Corners::TOP_LEFT);
+
+		if (topLeftResource == edgeTile->getResourceType(Corners::TOP_RIGHT)) {
+			//std::cout << "resource chain collection from the played tile TOP_LEFT resource\n";
+
+			incrementResource(topLeftResource);
+
+			if (edgeTile->getResourceType(Corners::TOP_LEFT) == topLeftResource) {
+
+				incrementResource(topLeftResource);
+
+				//Collect diagonal resources only if any adjacent tile is of the same resource
+				if (edgeTile->getResourceType(Corners::BOTTOM_LEFT) == topLeftResource)
+					incrementResource(topLeftResource);
+			}
+
+			if (edgeTile->getResourceType(Corners::BOTTOM_RIGHT) == topLeftResource) {
+
+				incrementResource(topLeftResource);
+
+				//Collect diagonal resources only if any adjacent tile is of the same resource
+				if (edgeTile->getResourceType(Corners::BOTTOM_LEFT) == topLeftResource)
+					incrementResource(topLeftResource);
+			}
+		}
+
+		ResourceTypes bottomLeftResource = tilePlayed->getResourceType(Corners::BOTTOM_LEFT);
+		
+		//To avoid duplicate collection, lets follow the Tile Corners order. The next one is the BOTTOM_LEFT resource
+		//We need to check if the TOP_LEFT resource has already collected the same type of adjacent resources
+		if (topLeftResource == bottomLeftResource && topLeftResource == edgeTile->getResourceType(Corners::BOTTOM_RIGHT)) {
+			//std::cout << "These resources has been previously collected.\n";
+		}
+		else if (bottomLeftResource == edgeTile->getResourceType(Corners::BOTTOM_RIGHT)) {
+			//std::cout << "resource chain collection from the played tile BOTTOM_LEFT resource\n";
+
+			incrementResource(bottomLeftResource);
+
+			if (edgeTile->getResourceType(Corners::BOTTOM_LEFT) == bottomLeftResource) {
+
+				incrementResource(bottomLeftResource);
+
+				//Collect diagonal resources only if any adjacent tile is of the same resource
+				if (edgeTile->getResourceType(Corners::TOP_LEFT) == bottomLeftResource)
+					incrementResource(bottomLeftResource);
+			}
+
+			if (edgeTile->getResourceType(Corners::TOP_RIGHT) == bottomLeftResource) {
+
+				incrementResource(bottomLeftResource);
+
+				//Collect diagonal resources only if any adjacent tile is of the same resource
+				if (edgeTile->getResourceType(Corners::TOP_LEFT) == bottomLeftResource)
+					incrementResource(bottomLeftResource);
+			}
+
+
+		}
+	}
+
+	if (edge == Edges::RIGHT) {
+		//std::cout << "right Node Edge, let's start a chain collection from the played tile topRight resource\n";
+
+		ResourceTypes topRightResource = tilePlayed->getResourceType(Corners::TOP_RIGHT);
+
+		if (topRightResource == edgeTile->getResourceType(Corners::TOP_LEFT)) {
+			//std::cout << "resource chain collection from the played tile TOP_RIGHT resource\n";
+
+			incrementResource(topRightResource);
+
+			if (edgeTile->getResourceType(Corners::TOP_RIGHT) == topRightResource) {
+
+				incrementResource(topRightResource);
+
+				//Collect diagonal resources only if any adjacent tile is of the same resource
+				if (edgeTile->getResourceType(Corners::BOTTOM_RIGHT) == topRightResource)
+					incrementResource(topRightResource);
+			}
+
+			if (edgeTile->getResourceType(Corners::BOTTOM_LEFT) == topRightResource) {
+
+				incrementResource(topRightResource);
+
+				//Collect diagonal resources only if any adjacent tile is of the same resource
+				if (edgeTile->getResourceType(Corners::BOTTOM_RIGHT) == topRightResource)
+					incrementResource(topRightResource);
+			}
+		}
+
+		ResourceTypes bottomRightResource = tilePlayed->getResourceType(Corners::BOTTOM_RIGHT);
+
+		//To avoid duplicate collection, lets follow the Tile Corners order. The next one is the BOTTOM_LEFT resource
+		//We need to check if the TOP_LEFT resource has already collected the same type of adjacent resources
+		if (topRightResource == bottomRightResource && topRightResource == edgeTile->getResourceType(Corners::TOP_LEFT)) {
+			//std::cout << "These resources has been previously collected.\n";
+		}
+		else if (bottomRightResource == edgeTile->getResourceType(Corners::BOTTOM_LEFT)) {
+			//std::cout << "resource chain collection from the played tile BOTTOM_LEFT resource\n";
+
+			incrementResource(bottomRightResource);
+
+			if (edgeTile->getResourceType(Corners::TOP_LEFT) == bottomRightResource) {
+
+				incrementResource(bottomRightResource);
+
+				//Collect diagonal resources only if any adjacent tile is of the same resource
+				if (edgeTile->getResourceType(Corners::TOP_RIGHT) == bottomRightResource)
+					incrementResource(bottomRightResource);
+			}
+
+			if (edgeTile->getResourceType(Corners::BOTTOM_RIGHT) == bottomRightResource) {
+
+				incrementResource(bottomRightResource);
+
+				//Collect diagonal resources only if any adjacent tile is of the same resource
+				if (edgeTile->getResourceType(Corners::TOP_RIGHT) == bottomRightResource)
+					incrementResource(bottomRightResource);
+			}
+
+
+		}
+	}
+
+	if (edge == Edges::BOTTOM) {
+		//std::cout << "bottom Node Edge, let's start a chain collection from the played tile bottomleft resource\n";
+
+		ResourceTypes bottomLeftResource = tilePlayed->getResourceType(Corners::BOTTOM_LEFT);
+
+		if (bottomLeftResource == edgeTile->getResourceType(Corners::TOP_LEFT)) {
+			//std::cout << "resource chain collection from the played tile BOTTOM_LEFT resource\n";
+
+			incrementResource(bottomLeftResource);
+
+			if (edgeTile->getResourceType(Corners::TOP_RIGHT) == bottomLeftResource) {
+
+				incrementResource(bottomLeftResource);
+
+				//Collect diagonal resources only if any adjacent tile is of the same resource
+				if (edgeTile->getResourceType(Corners::BOTTOM_RIGHT) == bottomLeftResource)
+					incrementResource(bottomLeftResource);
+			}
+
+			if (edgeTile->getResourceType(Corners::BOTTOM_LEFT) == bottomLeftResource) {
+
+				incrementResource(bottomLeftResource);
+
+				//Collect diagonal resources only if any adjacent tile is of the same resource
+				if (edgeTile->getResourceType(Corners::BOTTOM_RIGHT) == bottomLeftResource)
+					incrementResource(bottomLeftResource);
+			}
+		}
+
+		ResourceTypes bottomRightResource = tilePlayed->getResourceType(Corners::BOTTOM_RIGHT);
+
+		//To avoid duplicate collection, lets follow the Tile Corners order. The next one is the BOTTOM_LEFT resource
+		//We need to check if the TOP_LEFT resource has already collected the same type of adjacent resources
+		if (bottomLeftResource == bottomRightResource && bottomLeftResource == edgeTile->getResourceType(Corners::TOP_LEFT)) {
+			//std::cout << "These resources has been previously collected.\n";
+		}
+		else if (bottomRightResource == edgeTile->getResourceType(Corners::TOP_RIGHT)) {
+			//std::cout << "resource chain collection from the played tile BOTTOM_LEFT resource\n";
+
+			incrementResource(bottomRightResource);
+
+			if (edgeTile->getResourceType(Corners::TOP_LEFT) == bottomRightResource) {
+
+				incrementResource(bottomRightResource);
+
+				//Collect diagonal resources only if any adjacent tile is of the same resource
+				if (edgeTile->getResourceType(Corners::BOTTOM_LEFT) == bottomRightResource)
+					incrementResource(bottomRightResource);
+			}
+
+			if (edgeTile->getResourceType(Corners::BOTTOM_RIGHT) == bottomRightResource) {
+
+				incrementResource(bottomRightResource);
+
+				//Collect diagonal resources only if any adjacent tile is of the same resource
+				if (edgeTile->getResourceType(Corners::BOTTOM_LEFT) == bottomRightResource)
+					incrementResource(bottomRightResource);
+			}
+
+		}
+	}
+}
+
+void GameBoard::getCollectedResources() {
+
+	//Change to print the resource string: WHEAT 0, TIMBER 5...
+	for (int i = 0; i < this->resourcesCollected.size(); i++){
+		std::cout << ResourceTypesStrings[i] << ": " << this->resourcesCollected[i] << std::endl;
+	}
+}
+
+void GameBoard::incrementResource(enum ResourceTypes resourceType) {
+	this->resourcesCollected[resourceType] = ++(this->resourcesCollected[resourceType]);
 }

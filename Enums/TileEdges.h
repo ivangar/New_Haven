@@ -1,0 +1,17 @@
+//
+// Created by Ivan Garzon on 2020-02-27.
+//
+
+#ifndef COMP345_NEWHAVENPROJECT_TILEEDGES_H
+#define COMP345_NEWHAVENPROJECT_TILEEDGES_H
+
+#include <map>
+
+enum Edges {
+	TOP,
+	RIGHT,
+	LEFT,
+	BOTTOM
+};
+
+#endif //COMP345_NEWHAVENPROJECT_TILEEDGES_H

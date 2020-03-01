@@ -28,6 +28,10 @@ public:
 	void placeTileXY(HarvestTile* tile, int rowNumber, int columnNumber);
 	HarvestTile* getTileXY(int rowNumber, int columnNumber);
 	void printGameBoard();
+	void calculateResources(HarvestTile* tilePlayed, int rowNumber, int columnNumber);
+	void calculateAdjacentRes(HarvestTile* tilePlayed, HarvestTile* edgeTile, enum Edges edge);
+	void getCollectedResources();
+	void incrementResource(enum ResourceTypes resourceType);
 
 private:
 	int* mapRows;
@@ -37,5 +41,6 @@ private:
 	void printTopRow(int row);
 	void printBottomRow(int row);
 	std::vector< std::vector<int> > cornerTilePositions;
+	std::vector<int> resourcesCollected;
 };
 #endif
