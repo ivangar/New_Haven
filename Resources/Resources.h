@@ -96,6 +96,11 @@ private:
     const int BUILDING_DECK_SIZE = 144;
     std::vector<Buildings*> buildingDeck;
     std::vector<HarvestTile*> harvestDeck;
+    
+    // Method to create default Building deck
+    void createBuildingDeck();
+    // Method to create default Harvest Tile deck
+    void createHarvestDeck();
 };
 
 class Hand {
@@ -134,7 +139,8 @@ public:
         harvestTiles.push_back(ht);
     };
 
-    void exchange();
+    Buildings* exchangeBuildingTile(int pos);
+    HarvestTile* exchangeHarvestTile(int pos);
     void printHand();
 
 private:

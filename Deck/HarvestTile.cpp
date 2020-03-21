@@ -108,27 +108,6 @@ void HarvestTile::printTile() {
 	}
 }
 
-void HarvestTile::printHarvestTile() {
-
-    ResourceTypes r1 = this->getResourceType(Corners::TOP_LEFT);
-    ResourceTypes r2 = this->getResourceType(Corners::TOP_RIGHT);
-    ResourceTypes r3 = this->getResourceType(Corners::BOTTOM_LEFT);
-    ResourceTypes r4 = this->getResourceType(Corners::BOTTOM_RIGHT);
-
-    std::string r1_strg = resourceTypeString(r1);
-    std::string r2_strg = resourceTypeString(r2);
-    std::string r3_strg = resourceTypeString(r3);
-    std::string r4_strg = resourceTypeString(r4);
-
-    std::cout << "Harvest Tile \n";
-    std::cout << "============= \n";
-    std::cout << "Resource Type of Top left corner: " << r1_strg << ".\n";
-    std::cout << "Resource Type of Top right corner: " << r2_strg << ".\n";
-    std::cout << "Resource Type of Bottom left corner: " << r3_strg << ".\n";
-    std::cout << "Resource Type of Bottom right corner: " << r4_strg << ".\n\n";
-
-}
-
 void HarvestTile::setHarvestTileResources(std::vector<ResourceTypes> res) {
 
 	//Set statically resources for now

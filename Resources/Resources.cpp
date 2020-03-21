@@ -4,6 +4,7 @@
 #include "../Enums/ResourceTypes.h"
 #include <array>
 #include <iostream>
+#include <random>
 #include <string>
 #include <vector>
 
@@ -95,36 +96,110 @@ void Buildings::printBuildingTile() {
 /***************/
 Deck::Deck() {
     std::cout << "Creating a deck...";
+    
     // Create Buildings Deck
+    this->createBuildingDeck();
 
-    Buildings* bld = nullptr;
+    // Create Harvest Tile Deck
+
+    this->createHarvestDeck();
+
+    // Shuffle both decks
+    std::random_device rd;
+	std::mt19937 g(rd());
+
+	std::shuffle(buildingDeck.begin(), buildingDeck.end(), g);
+    std::shuffle(harvestDeck.begin(), harvestDeck.end(), g);
+
+    std::cout << "Deck created. \n\n";
+}
+
+void Deck::createBuildingDeck() {
+        Buildings* bld = nullptr;
 
     for (int i = 1; i <= NUMBER_OF_BUILDINGS_PER_PRICE; i++) {
         for (int j = 0; j < NUMBER_OF_DIFFERENT_BUILDING_COLOURS; ++j) {
             for (int k = 0; k < NUMBER_OF_BUILDINGS_PER_COLOUR; ++k) {
                 bld = new Buildings(static_cast<ResourceTypes>(j), i);
                 buildingDeck.push_back(bld);
-//                 bld->printBuildingTile();
             }
         }
     }
     std::cout << "\nBuilding deck created. \n Size: " << buildingDeck.size() << ". \n\n";
+}
 
-    // Create Harvest Tile Deck
+void Deck::createHarvestDeck() {
+    // All harvest tiles are (unfortunately) hardcoded 
 
-    HarvestTile* ht = nullptr;
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::WHEATFIELD, ResourceTypes::QUARRY, ResourceTypes::WHEATFIELD, ResourceTypes::QUARRY));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::FOREST, ResourceTypes::FOREST, ResourceTypes::FOREST, ResourceTypes::QUARRY));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::MEADOW, ResourceTypes::MEADOW, ResourceTypes::MEADOW, ResourceTypes::QUARRY));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::WHEATFIELD, ResourceTypes::FOREST, ResourceTypes::WHEATFIELD, ResourceTypes::QUARRY));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::FOREST, ResourceTypes::WHEATFIELD, ResourceTypes::FOREST, ResourceTypes::WHEATFIELD));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::MEADOW, ResourceTypes::MEADOW, ResourceTypes::MEADOW, ResourceTypes::WHEATFIELD));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::FOREST, ResourceTypes::QUARRY, ResourceTypes::FOREST, ResourceTypes::QUARRY));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::QUARRY, ResourceTypes::WHEATFIELD, ResourceTypes::QUARRY, ResourceTypes::MEADOW));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::WHEATFIELD, ResourceTypes::QUARRY, ResourceTypes::WHEATFIELD, ResourceTypes::MEADOW));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::MEADOW, ResourceTypes::QUARRY, ResourceTypes::WHEATFIELD, ResourceTypes::MEADOW));
+        
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::FOREST, ResourceTypes::MEADOW, ResourceTypes::FOREST, ResourceTypes::QUARRY));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::WHEATFIELD, ResourceTypes::MEADOW, ResourceTypes::WHEATFIELD, ResourceTypes::FOREST));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::FOREST, ResourceTypes::QUARRY, ResourceTypes::MEADOW, ResourceTypes::FOREST));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::QUARRY, ResourceTypes::QUARRY, ResourceTypes::QUARRY, ResourceTypes::MEADOW));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::MEADOW, ResourceTypes::QUARRY, ResourceTypes::MEADOW, ResourceTypes::QUARRY));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::MEADOW, ResourceTypes::WHEATFIELD, ResourceTypes::MEADOW, ResourceTypes::QUARRY));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::FOREST, ResourceTypes::WHEATFIELD, ResourceTypes::FOREST, ResourceTypes::WHEATFIELD));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::FOREST, ResourceTypes::QUARRY, ResourceTypes::FOREST, ResourceTypes::WHEATFIELD));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::MEADOW, ResourceTypes::WHEATFIELD, ResourceTypes::MEADOW, ResourceTypes::WHEATFIELD));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::MEADOW, ResourceTypes::MEADOW, ResourceTypes::MEADOW, ResourceTypes::FOREST));
+        
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::FOREST, ResourceTypes::WHEATFIELD, ResourceTypes::FOREST, ResourceTypes::QUARRY));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::QUARRY, ResourceTypes::MEADOW, ResourceTypes::QUARRY, ResourceTypes::WHEATFIELD));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::QUARRY, ResourceTypes::QUARRY, ResourceTypes::QUARRY, ResourceTypes::WHEATFIELD));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::MEADOW, ResourceTypes::QUARRY, ResourceTypes::FOREST, ResourceTypes::MEADOW));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::MEADOW, ResourceTypes::WHEATFIELD, ResourceTypes::FOREST, ResourceTypes::MEADOW));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::QUARRY, ResourceTypes::WHEATFIELD, ResourceTypes::QUARRY, ResourceTypes::FOREST));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::WHEATFIELD, ResourceTypes::MEADOW, ResourceTypes::FOREST, ResourceTypes::WHEATFIELD));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::QUARRY, ResourceTypes::QUARRY, ResourceTypes::QUARRY, ResourceTypes::FOREST));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::FOREST, ResourceTypes::MEADOW, ResourceTypes::FOREST, ResourceTypes::MEADOW));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::WHEATFIELD, ResourceTypes::QUARRY, ResourceTypes::FOREST, ResourceTypes::WHEATFIELD));
+        
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::MEADOW, ResourceTypes::QUARRY, ResourceTypes::MEADOW, ResourceTypes::WHEATFIELD));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::WHEATFIELD, ResourceTypes::FOREST, ResourceTypes::WHEATFIELD, ResourceTypes::MEADOW));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::QUARRY, ResourceTypes::MEADOW, ResourceTypes::QUARRY, ResourceTypes::FOREST));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::FOREST, ResourceTypes::WHEATFIELD, ResourceTypes::FOREST, ResourceTypes::MEADOW));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::FOREST, ResourceTypes::QUARRY, ResourceTypes::WHEATFIELD, ResourceTypes::FOREST));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::WHEATFIELD, ResourceTypes::WHEATFIELD, ResourceTypes::WHEATFIELD, ResourceTypes::FOREST));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::MEADOW, ResourceTypes::FOREST, ResourceTypes::MEADOW, ResourceTypes::WHEATFIELD));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::FOREST, ResourceTypes::MEADOW, ResourceTypes::FOREST, ResourceTypes::MEADOW));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::WHEATFIELD, ResourceTypes::WHEATFIELD, ResourceTypes::WHEATFIELD, ResourceTypes::MEADOW));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::WHEATFIELD, ResourceTypes::WHEATFIELD, ResourceTypes::WHEATFIELD, ResourceTypes::QUARRY));
+        
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::FOREST, ResourceTypes::MEADOW, ResourceTypes::FOREST, ResourceTypes::WHEATFIELD));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::QUARRY, ResourceTypes::FOREST, ResourceTypes::QUARRY, ResourceTypes::WHEATFIELD));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::MEADOW, ResourceTypes::QUARRY, ResourceTypes::MEADOW, ResourceTypes::FOREST));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::QUARRY, ResourceTypes::WHEATFIELD, ResourceTypes::FOREST, ResourceTypes::QUARRY));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::FOREST, ResourceTypes::QUARRY, ResourceTypes::FOREST, ResourceTypes::MEADOW));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::MEADOW, ResourceTypes::QUARRY, ResourceTypes::MEADOW, ResourceTypes::QUARRY));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::QUARRY, ResourceTypes::FOREST, ResourceTypes::QUARRY, ResourceTypes::MEADOW));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::FOREST, ResourceTypes::FOREST, ResourceTypes::FOREST, ResourceTypes::WHEATFIELD));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::MEADOW, ResourceTypes::WHEATFIELD, ResourceTypes::MEADOW, ResourceTypes::WHEATFIELD));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::WHEATFIELD, ResourceTypes::MEADOW, ResourceTypes::WHEATFIELD, ResourceTypes::QUARRY));
+        
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::FOREST, ResourceTypes::WHEATFIELD, ResourceTypes::MEADOW, ResourceTypes::FOREST));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::WHEATFIELD, ResourceTypes::QUARRY, ResourceTypes::WHEATFIELD, ResourceTypes::QUARRY));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::WHEATFIELD, ResourceTypes::QUARRY, ResourceTypes::WHEATFIELD, ResourceTypes::FOREST));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::QUARRY, ResourceTypes::MEADOW, ResourceTypes::FOREST, ResourceTypes::QUARRY));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::QUARRY, ResourceTypes::WHEATFIELD, ResourceTypes::MEADOW, ResourceTypes::QUARRY));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::MEADOW, ResourceTypes::WHEATFIELD, ResourceTypes::MEADOW, ResourceTypes::FOREST));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::FOREST, ResourceTypes::FOREST, ResourceTypes::FOREST, ResourceTypes::MEADOW));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::MEADOW, ResourceTypes::FOREST, ResourceTypes::MEADOW, ResourceTypes::QUARRY));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::WHEATFIELD, ResourceTypes::QUARRY, ResourceTypes::MEADOW, ResourceTypes::WHEATFIELD));
+    harvestDeck.push_back(new HarvestTile(ResourceTypes::FOREST, ResourceTypes::QUARRY, ResourceTypes::FOREST, ResourceTypes::QUARRY));
 
-    for (int i = 0; i < NUMBER_OF_HARVEST_TILES; i++) {
-        ht = new HarvestTile();
-//        ht = new HarvestTile(ResourceTypes::FOREST, ResourceTypes::FOREST,
-//                             ResourceTypes::MEADOW, ResourceTypes::QUARRY);                // Create same tile for now
-		ht->setRandomHarvestTile();
-        harvestDeck.push_back(ht);
-        // ht->printHarvestTile();
-    }
-    std::cout << "\nHarvest deck created. \n Size: " << harvestDeck.size() << ". \n\n";
+    
 
-    std::cout << "Deck created. \n\n";
+    std::cout << "Harvest deck created. \n Size: " << harvestDeck.size() << std::endl;
 }
 
 Buildings* Deck::drawBuildings() {
@@ -202,8 +277,31 @@ Hand::~Hand() {
     delete pid;
 }
 
-void exchange() {
-    // TODO: Implement the exchange function.
+Buildings* Hand::exchangeBuildingTile(int pos) {
+    std::cout << "Exchanging building tile @ " << pos << std::endl;
+
+    int actual_pos = pos - 1;
+    
+    Buildings* exchange_building = std::move(buildingTiles[actual_pos]);
+
+    // Hand the removal of chosen tile
+    buildingTiles[actual_pos] = nullptr;    // Dereference the Building removed
+    buildingTiles.erase(buildingTiles.begin()+actual_pos);          // Erase the chosen tile
+
+    return exchange_building;
+}
+
+HarvestTile* Hand::exchangeHarvestTile(int pos) {
+    std::cout << "Exchanging harvest tile @ " << pos << std::endl;
+    int actual_pos = pos - 1;
+    
+    HarvestTile* exchange_ht = std::move(harvestTiles[actual_pos]);
+
+    // Handle the removal of chosen tile
+    harvestTiles[actual_pos] = nullptr;    // Dereference the Building removed
+    harvestTiles.erase(harvestTiles.begin()+actual_pos);          // Erase the chosen tile 
+
+    return exchange_ht;
 }
 
 void Hand::printHand() {
@@ -217,14 +315,14 @@ void Hand::printHand() {
     } else {
         std::cout << "Your building tiles are: \n";
 
-        for (auto bt : bld_hand) {
+        for (auto &bt : bld_hand) {
         bt->printBuildingTile();
         }
 
         std::cout << "\n\n";
         std::cout << "Your harvest tiles are: \n";
 
-        for (auto ht : ht_hand) {
+        for (auto &ht : ht_hand) {
             ht->printTile();
         }
     }

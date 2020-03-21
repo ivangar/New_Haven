@@ -61,7 +61,6 @@ public:
 	char getResourceChar(ResourceTypes *resource);
 	void printTopResources();
 	void printBottomResources();
-	void printHarvestTile();		// Used to print a string version of the tile
 	int* getResources() {
 		return resources;
 	}
