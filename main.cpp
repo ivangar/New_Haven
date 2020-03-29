@@ -9,10 +9,7 @@
 #include "Resources/ResourcesDriver.h"
 
 int main() {
-  // GraphDriver::graphTest();
-  // VGMapDriver::villageGameBoardMapDriver();
 	GameStartDriver::gameStart();
-  //ResourcesDriver::resourcesDriver();
 
   system("pause");
     return 0;

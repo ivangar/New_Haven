@@ -38,6 +38,7 @@ public:
 	~ResourceTrack();
 
 	void resetTrack();
+	void addResources(int position, int amount);
 	void incrementResource(ResourceTypes resourceType);
 	void decrementResource(ResourceTypes resourceType, int amount);
 	void printResourceTrack();

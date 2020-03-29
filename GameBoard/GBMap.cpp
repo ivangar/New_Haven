@@ -23,6 +23,13 @@ FaceUpPool::FaceUpPool() {
 	this->faceUpBuildings.assign(5, nullptr);
 }
 
+FaceUpPool::~FaceUpPool() {
+	for (std::vector<Buildings*>::iterator res = this->faceUpBuildings.begin(); res != this->faceUpBuildings.end(); ++res) {
+		delete *res;
+	}
+	this->faceUpBuildings.clear();
+}
+
 /**
 * Replenish face up pool to always have 5 buildings
 */
@@ -79,6 +86,9 @@ ResourceTrack::ResourceTrack() {
 	this->resourceMarkers.assign(4, 0);
 }
 
+ResourceTrack::~ResourceTrack() {
+}
+
 void ResourceTrack::resetTrack() {
 	std::cout << "\nReseting Resource markers \n";
 	this->resourceMarkers.assign(4, 0);
@@ -91,6 +101,10 @@ void ResourceTrack::resetTrack() {
 
 void ResourceTrack::incrementResource(ResourceTypes resourceType) {
 	this->resourceMarkers[resourceType] = ++(this->resourceMarkers[resourceType]);
+}
+
+void ResourceTrack::addResources(int position, int amount) {
+	this->resourceMarkers[position] = this->resourceMarkers[position] + amount;
 }
 
 void ResourceTrack::decrementResource(ResourceTypes resourceType, int amount) {
@@ -185,11 +199,15 @@ GameBoard::~GameBoard() {
     }
 
 	delete gameBoardGraph;
+	delete resourceTrack;
+	delete faceUpPool;
 
 	mapRows = nullptr;
 	mapColumns = nullptr;
 	players = nullptr;
 	gameBoardGraph = nullptr;
+	resourceTrack = nullptr;
+	faceUpPool = nullptr;
 }
 
 /**
@@ -422,28 +440,54 @@ void GameBoard::setRows_Columns() {
 
 void GameBoard::calculateResources(HarvestTile* tilePlayed) {
 
+	//If the tile placed is a Shipment Tile, do not collect recursively resources
+	if (!(*tilePlayed->getIsFaceUp())) {
+
+		ResourceTrack* resTracker = getResourceTrack();
+
+		int resourceNumber;
+		std::cout << "You have placed a Shipment Tile, select the resource ID of the corresponding resources you wish to have: \n" << std::endl;
+		std::cout << "WHEATFIELD - 0 \nMEADOW - 1 \nFOREST - 2 \nQUARRY - 3 \n" << std::endl;
+		std::cin >> resourceNumber;
+
+		while (!std::cin || (resourceNumber < 0 || resourceNumber > 3))
+		{
+			// user didn't input a number
+			std::cin.clear();
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			// next, request user reinput
+			std::cout << "Please enter a valid number: ";
+			std::cin >> resourceNumber;
+		}
+		std::cout << "You have chosen 4 " << ResourceTypesStrings[resourceNumber] << " resources " << std::endl;
+
+		resTracker->addResources(resourceNumber, 4);
+
+	}
 	// Check all 4 resources:
-	// TOP_LEFT
+	else{
+		// TOP_LEFT
 
-	Corner* TopLeftResource = tilePlayed->getTopLeftResource();
-	CheckResources(tilePlayed, TopLeftResource->getResourceType(), Corners::TOP_LEFT);
+		Corner* TopLeftResource = tilePlayed->getTopLeftResource();
+		CheckResources(tilePlayed, TopLeftResource->getResourceType(), Corners::TOP_LEFT);
 
-	// TOP_RIGHT
+		// TOP_RIGHT
 
-	Corner* TopRightResource = tilePlayed->getTopRightResource();
-	CheckResources(tilePlayed, TopRightResource->getResourceType(), Corners::TOP_RIGHT);
+		Corner* TopRightResource = tilePlayed->getTopRightResource();
+		CheckResources(tilePlayed, TopRightResource->getResourceType(), Corners::TOP_RIGHT);
 
-	//BOTTOM_LEFT
+		//BOTTOM_LEFT
 
-	Corner* BottomLeftResource = tilePlayed->getBottomLeftResource();
-	CheckResources(tilePlayed, BottomLeftResource->getResourceType(), Corners::BOTTOM_LEFT);
+		Corner* BottomLeftResource = tilePlayed->getBottomLeftResource();
+		CheckResources(tilePlayed, BottomLeftResource->getResourceType(), Corners::BOTTOM_LEFT);
 
-	//BOTTOM_RIGHT
+		//BOTTOM_RIGHT
 
-	Corner* BottomRightResource = tilePlayed->getBottomRightResource();
-	CheckResources(tilePlayed, BottomRightResource->getResourceType(), Corners::BOTTOM_RIGHT);
+		Corner* BottomRightResource = tilePlayed->getBottomRightResource();
+		CheckResources(tilePlayed, BottomRightResource->getResourceType(), Corners::BOTTOM_RIGHT);
 
-	resetTileCorners();
+		resetTileCorners();
+	}
 }
 
 void GameBoard::CheckResources(HarvestTile* currentHarvestTile, ResourceTypes Resourcetype, Corners corner) {

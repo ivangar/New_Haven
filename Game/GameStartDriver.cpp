@@ -1,3 +1,6 @@
+//
+// Created by Ivan Garzon on 2020-03-25.
+//
 #include "GameStartDriver.h"
 #include "../GameBoard/GBMap.h"
 #include "../Player/Player.h"
@@ -19,6 +22,7 @@ void GameStartDriver::gameStart() {
 	Deck *dck = new Deck();
 
 	//There is no way to know in advance how many players will be playing, so we declare all of them
+
 	Player* player1;
 	Player* player2;
 	Player* player3;
@@ -62,18 +66,6 @@ void GameStartDriver::gameStart() {
 	player1->buildVillage();
 	player2->buildVillage();
 
-	/*
-	//To draw a building from a face up pool, and set it to player's hand
-	Buildings* drawBld1 = gameBoard->getFaceUpPool()->drawFaceUpBuilding(1);
-	player1->getHand()->addBuildingTile(drawBld1);
-	
-	std::cout << "\n\n Player 1 hand:" << std::endl;
-	player1->getHand()->printHand();
-
-	//To Replenish face up pool after player's turn is over
-	gameBoard->getFaceUpPool()->replenishPool(dck);
-	*/
-
 	//Draw building tiles and harvest tiles for each player
 	for (int i = 0; i < 6; ++i) 
 	{
@@ -102,9 +94,6 @@ void GameStartDriver::gameStart() {
 
 		for (int i = 0; i < 2; ++i)
 			player3->drawHarvestTile(dck);
-
-		std::cout << "\n\n Player 3 hand:" << std::endl;
-		player3->getHand()->printHand();
 	}
 		
 	if (numberOfPlayers == 4) {
@@ -127,19 +116,8 @@ void GameStartDriver::gameStart() {
 			player4->drawHarvestTile(dck);
 		}
 
-		std::cout << "\n\n Player 4 hand:" << std::endl;
-		player4->getHand()->printHand();
 	}
 
-	/*
-	//To exchange a Shipment Tile from player's hand:
-	std::cout << "\n\n Exchanging player1 Shipment tile :" << std::endl;
-	HarvestTile* ex_ht = new HarvestTile();
-	ex_ht = player1->getHand()->exchangeShipmentTile();
-	ex_ht->printTile();
-
-	player1->getHand()->printHand();
-	*/
-	std::cout << "\n\n This is the current deck after drawing tiles:" << std::endl;
-	dck->printDeck();
+	//HERE SHOULD BE CALLED THE NEXT DRIVER PASSING ALL OBJECTS
+	//for example: GamePlayDriver::gamePlay(gameBoard, dck, numberOfPlayers, player1, player2, player3, player4);
 }

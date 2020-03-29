@@ -275,6 +275,8 @@ Hand::Hand(int* player) {
 
 Hand::~Hand() {
     delete pid;
+	delete shipmentTile;
+	shipmentTile = nullptr;
 }
 
 Buildings* Hand::exchangeBuildingTile(int pos) {
