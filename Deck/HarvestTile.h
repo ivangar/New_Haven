@@ -89,6 +89,18 @@ public:
 
 	void resetCornerCount();
 
+	bool *getIsFaceUp() const {
+		return isFaceUp;
+	}
+
+	void setIsFaceUp(bool faceUp) {
+		isFaceUp = new bool(faceUp);
+	}
+
+	void flipTile() {
+		*isFaceUp = !(*isFaceUp);
+	}
+
 private:
 	const int corners = 4;
 	const int *NUM_CORNERS = &corners;
@@ -99,6 +111,7 @@ private:
 	Corner* TopRightResource;
 	Corner* BottomLeftResource;
 	Corner* BottomRightResource;
+	bool* isFaceUp;
 };
 
 #endif

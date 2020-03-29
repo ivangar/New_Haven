@@ -12,7 +12,8 @@ file(GLOB GameBoardSources "GameBoard/*")
 file(GLOB PlayerSources "Player/*")
 file(GLOB ResourceSources "Resources/*")
 file(GLOB VillageBoardSources "VillageBoard/*")
+file(GLOB GameSources "Game/*")
 
 
 
-add_executable(COMP345_NewHavenProject main.cpp ${AbstractClassSources} ${DataStructureSources} ${DeckSources} ${EnumSources} ${GameBoardSources} ${PlayerSources} ${ResourceSources} ${VillageBoardSources} Enums/VillageBoardNames.h)
+add_executable(COMP345_NewHavenProject main.cpp ${AbstractClassSources} ${DataStructureSources} ${DeckSources} ${EnumSources} ${GameBoardSources} ${PlayerSources} ${ResourceSources} ${VillageBoardSources} ${GameSources} Enums/VillageBoardNames.h)

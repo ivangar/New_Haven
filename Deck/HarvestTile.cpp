@@ -12,6 +12,7 @@
 
 HarvestTile::HarvestTile() {
 	this->resources = nullptr;  //amount of resources, if no resources the tile is empty
+	this->setIsFaceUp(true);
 }
 
 HarvestTile::HarvestTile(const HarvestTile& copy_ht) {
@@ -53,6 +54,8 @@ HarvestTile::HarvestTile(ResourceTypes r1, ResourceTypes r2, ResourceTypes r3, R
 	this->TopRightResource = new Corner(r2);
 	this->BottomLeftResource = new Corner(r3);
 	this->BottomRightResource = new Corner(r4);
+
+	this->setIsFaceUp(true);
 }
 
 HarvestTile::~HarvestTile() {
@@ -64,6 +67,8 @@ HarvestTile::~HarvestTile() {
 	delete this->NUM_CORNERS;
 	this->resources = nullptr;
 	this->NUM_CORNERS = nullptr;
+	delete this->isFaceUp;
+	this->isFaceUp = nullptr;
 }
 
 HarvestTile& HarvestTile::operator=(HarvestTile&& ht) {
@@ -87,10 +92,19 @@ HarvestTile& HarvestTile::operator=(HarvestTile&& ht) {
 void HarvestTile::printTile() {
 	//if the Tile has resources, print each one
 	if (resources != nullptr) {
+
 		char topLeft = getResourceChar(this->res_vctr[Corners::TOP_LEFT]);
 		char topRight = getResourceChar(this->res_vctr[Corners::TOP_RIGHT]);
 		char bottomLeft = getResourceChar(this->res_vctr[Corners::BOTTOM_LEFT]);
 		char bottomRight = getResourceChar(this->res_vctr[Corners::BOTTOM_RIGHT]);
+		
+		if (!(*getIsFaceUp()))
+		{
+			topLeft = 'X';
+			topRight = 'X';
+			bottomLeft = 'X';
+			bottomRight = 'X';
+		}
 
 		std::cout << std::setfill('-') << std::setw(11) << "\n|" << topLeft << std::setfill(' ') << std::setw(6) << topRight << "|\n";
 		std::cout << "|" << std::setfill(' ') << std::setw(9) << "|\n";
@@ -135,12 +149,19 @@ void HarvestTile::printTopResources() {
 
 		char topLeft = getResourceChar(this->res_vctr[Corners::TOP_LEFT]);
 		char topRight = getResourceChar(this->res_vctr[Corners::TOP_RIGHT]);
+
+		if (!(*getIsFaceUp()))
+		{
+			topLeft = 'X';
+			topRight = 'X';
+		}
+
 		std::cout << "  |" << topLeft << std::setfill(' ') << std::setw(6) << topRight << "|   ";
 	}
 
 	//else print as an empty tile on the GameBoard
 	else {
-		std::cout << "  |   X   |   ";
+		std::cout << "  |       |   ";
 	}
 }
 
@@ -152,6 +173,13 @@ void HarvestTile::printBottomResources() {
 		std::cout << "  |";
 		char bottomLeft = getResourceChar(this->res_vctr[Corners::BOTTOM_LEFT]);
 		char bottomRight = getResourceChar(this->res_vctr[Corners::BOTTOM_RIGHT]);
+
+		if (!(*getIsFaceUp()))
+		{
+			bottomLeft = 'X';
+			bottomRight = 'X';
+		}
+
 		std::cout << bottomLeft << std::setfill(' ') << std::setw(6) << bottomRight << "|   ";
 	}
 

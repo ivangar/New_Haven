@@ -14,7 +14,22 @@
 #include "../Data Structures/Graph.h"
 #include "../Enums/CornersTypes.h"
 #include "../Enums/TileEdges.h"
+#include "../Resources/Resources.h"
 #include <vector>
+
+class FaceUpPool {
+public:
+
+	FaceUpPool();
+	~FaceUpPool();
+
+	void replenishPool(Deck* game_deck);
+	void printFaceUpPool();
+	Buildings* drawFaceUpBuilding(int position);
+
+private:
+	std::vector<Buildings*> faceUpBuildings;
+};
 
 class ResourceTrack {
 public:
@@ -40,7 +55,7 @@ public:
 	//Setting up constructors and destructors
 
 	GameBoard();
-	GameBoard(int players);
+	GameBoard(int players, Deck* game_deck);
 	~GameBoard();
 
 	//getters and setters
@@ -65,6 +80,9 @@ public:
 	ResourceTrack* getResourceTrack() const {
 		return resourceTrack;
 	}
+	FaceUpPool* getFaceUpPool() const {
+		return faceUpPool;
+	}
 	void resetTileCorners();
 
 private:
@@ -76,5 +94,6 @@ private:
 	void printBottomRow(int row);
 	std::vector< std::vector<int> > cornerTilePositions;
 	ResourceTrack* resourceTrack;
+	FaceUpPool* faceUpPool;
 };
 #endif

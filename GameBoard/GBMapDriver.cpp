@@ -6,9 +6,11 @@
 #include "GBMapDriver.h"
 #include "GBMap.h"
 #include "../Player/PlayerDriver.h"
+#include "../Resources/Resources.h"
 
 void GBMapDriver::gameBoardMapDriver() {
 
+	Deck *dck = new Deck();
 	int players;
 	std::cout << "Please enter the number of players (allowed 2, 3 or 4 players): ";
 	std::cin >> players;
@@ -23,7 +25,7 @@ void GBMapDriver::gameBoardMapDriver() {
 		std::cin >> players;
 	}
 
-	GameBoard* gameBoard = new GameBoard(players);
+	GameBoard* gameBoard = new GameBoard(players, dck);
 
 	gameBoard->printGameBoard();
 

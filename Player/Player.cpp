@@ -54,6 +54,14 @@ void Player::drawHarvestTile(Deck* game_deck)
     this->hand->addHarvestTile(drawnHt);
 }
 
+void Player::drawShipmentTile(Deck* game_deck)
+{
+	HarvestTile* drawnHt = game_deck->drawHarvest();
+	drawnHt->flipTile();
+
+	this->hand->addShipmentTile(drawnHt);
+}
+
 void Player::resourceTracker()
 {
 	this->collectedResources.clear();

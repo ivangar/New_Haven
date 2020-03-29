@@ -14,6 +14,63 @@
 #include "../Deck/HarvestTile.h"
 #include "../Enums/ResourceTypes.h"
 #include "../Enums/TileEdges.h"
+#include "../Resources/Resources.h"
+
+ /**
+ * Face up pool of buildings object used in game board
+ */
+FaceUpPool::FaceUpPool() {
+	this->faceUpBuildings.assign(5, nullptr);
+}
+
+/**
+* Replenish face up pool to always have 5 buildings
+*/
+void FaceUpPool::replenishPool(Deck* game_deck) {
+
+	std::cout << "\nReplenishing face up pool: \n\n";
+
+	for (std::vector<Buildings*>::iterator it = this->faceUpBuildings.begin(); it != this->faceUpBuildings.end(); ++it) {
+		if (*it == nullptr) 
+		{
+			Buildings* drawnBld = game_deck->drawBuildings();
+			*it = drawnBld;
+		}
+	}
+}
+
+/**
+* Print the face up pool below the game board
+*/
+void FaceUpPool::printFaceUpPool() {
+
+	std::cout << "\nFace up pool: \n\n";
+
+	for (std::vector<Buildings*>::iterator it = this->faceUpBuildings.begin(); it != this->faceUpBuildings.end(); ++it) {
+		if (*it != nullptr)
+			(*it)->printBuildingTile();
+	}
+}
+
+/**
+* Drawing a building from face up pool
+*/
+Buildings* FaceUpPool::drawFaceUpBuilding(int position)
+{
+	std::cout << "\nDrawing a building tile from the face up pool.\n";
+	int pos = --position;
+
+	if (this->faceUpBuildings[pos] != nullptr) {
+		Buildings* drawn_building = std::move(this->faceUpBuildings[pos]);         // Draw the 'top' Building tile
+
+		// Handle the drawing of this tile
+		this->faceUpBuildings[pos] = nullptr;    // Dereference the Building removed
+
+		return drawn_building;
+	}
+
+	return nullptr;
+}
 
  /**
  * Resource Track object used in game board
@@ -55,12 +112,13 @@ void ResourceTrack::printResourceTrack() {
 	for (int i = 0; i < this->resourceMarkers.size(); i++) {
 		std::cout << ResourceTypesStrings[i] << ": " << this->resourceMarkers[i] << std::endl;
 	}
+	std::cout << std::endl;
 }
 
 /**
 * Constructor that sets a gameboard graph and 4 default HarvesTiles in the 4 corners
 */
-GameBoard::GameBoard(int players) {
+GameBoard::GameBoard(int players, Deck* game_deck) {
 	this->players = new int(players);
 	this->setRows_Columns();
 
@@ -103,6 +161,10 @@ GameBoard::GameBoard(int players) {
 
 	//Reset track, we don't want to track resources yet
 	this->resourceTrack->resetTrack();
+
+	//set a face up pool of 5 Buildings
+	this->faceUpPool = new FaceUpPool();
+	this->faceUpPool->replenishPool(game_deck);
 }
 
 /**
@@ -190,6 +252,10 @@ void GameBoard::printGameBoard() {
 		printTopRow(i);
 		printBottomRow(i);
 	}
+	std::cout << std::endl;
+
+	this->faceUpPool->printFaceUpPool();
+	std::cout << std::endl;
 }
 
 /**

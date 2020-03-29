@@ -78,13 +78,13 @@ void Buildings::printBuildingTile() {
     std::string resStr;
 
     switch(*this->resourceType) {
-        case 0: resStr = "FOREST";
+        case 0: resStr = "WHEAT";
             break;
         case 1: resStr = "MEADOW";
             break;
-        case 2: resStr = "QUARRY";
+        case 2: resStr = "FOREST";
             break;
-        case 3: resStr = "WHEATFIELD";
+        case 3: resStr = "QUARRY";
             break;
     }
 
@@ -304,6 +304,17 @@ HarvestTile* Hand::exchangeHarvestTile(int pos) {
     return exchange_ht;
 }
 
+HarvestTile* Hand::exchangeShipmentTile() {
+	std::cout << "Exchanging shipment harvest tile " << std::endl;
+
+	HarvestTile* exchange_ht = getShipmentTile();
+
+	// Handle the removal of chosen tile
+	this->shipmentTile = nullptr;    // Dereference the Building removed
+
+	return exchange_ht;
+}
+
 void Hand::printHand() {
     std::vector<HarvestTile*> ht_hand = this->getHarvestTiles();
     std::vector<Buildings*> bld_hand = this->getBuildingTiles();
@@ -325,5 +336,15 @@ void Hand::printHand() {
         for (auto &ht : ht_hand) {
             ht->printTile();
         }
+
+		if (this->shipmentTile != nullptr)
+		{
+			std::cout << "\n\n";
+			std::cout << "Your Shipment tile is: \n";
+			this->shipmentTile->printTile();
+		}
+
+		
+
     }
 }

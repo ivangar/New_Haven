@@ -27,6 +27,7 @@ public:
     void placeHarvestTile(HarvestTile* tile, int rowNumber, int columnNumber);
     void drawBuildingTile(Deck* game_deck);
     void drawHarvestTile(Deck* game_deck);
+	void drawShipmentTile(Deck* game_deck);
     void resourceTracker();
     void buildVillage();
     void calculateResources();

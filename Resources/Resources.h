@@ -139,15 +139,24 @@ public:
         harvestTiles.push_back(ht);
     };
 
+	void addShipmentTile(HarvestTile* ht) {
+		shipmentTile = ht;
+	}
+	
+	HarvestTile* getShipmentTile() {
+		return shipmentTile;
+	};
+
     Buildings* exchangeBuildingTile(int pos);
     HarvestTile* exchangeHarvestTile(int pos);
+	HarvestTile* exchangeShipmentTile();
     void printHand();
 
 private:
     const int MAX_BT = 6;
-    const int MAX_HT = 3;
+    const int MAX_HT = 2;
     int* pid;
     std::vector<Buildings*> buildingTiles;
     std::vector<HarvestTile*> harvestTiles;
-
+	HarvestTile* shipmentTile;
 };
